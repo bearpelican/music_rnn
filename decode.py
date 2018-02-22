@@ -34,8 +34,7 @@ def sampled_stream(utf_to_txt_json, utf8_file, out_dir, min_length, max_length):
     This method splits on START_DELIM and outputs one text and musicXML encoded file for each score.
     """
     utf_to_txt = json.load(utf_to_txt_json)
-    utf_data = filter(lambda x: x != u'\n', codecs.open(utf8_file, "r", "utf-8").read())
-    utf_scores = utf_data.split(START_DELIM)[1:] # [1:] ignores first START_DELIM
+    utf_scores = find_utf_scores(utf_to_txt, utf8_file)
 
     i = 0
     for utf_score in utf_scores:
@@ -59,14 +58,24 @@ def single(utf_to_txt_json, utf8_file, out_file):
     Decodes a single UTF8 output file
     """
     utf_to_txt = json.load(utf_to_txt_json)
-    utf_data = filter(lambda x: x != u'\n', codecs.open(utf8_file, "r", "utf-8").read())
-    utf_scores = utf_data.split(START_DELIM)[1:] # [1:] ignores first START_DELIM
+    utf_scores = find_utf_scores(utf_to_txt, utf8_file)
 
     score = decode_utf_single(utf_to_txt, utf_scores[0])
     print('Writing {0}'.format(out_file.name))
     if score:
         to_musicxml(score).write('musicxml', out_file.name)
 
+def find_utf_scores(utf_to_txt, utf8_file):
+#    utf_to_txt = json.load(utf_to_txt_json)   
+    # (AS) Old python 2 way
+#    utf_data = filter(lambda x: x != u'\n', codecs.open(utf8_file, "r", "utf-8").read())
+#    utf_scores = utf_data.split(START_DELIM)[1:] # [1:] ignores first START_DELIM
+
+    utf_data = filter(lambda x: x != u'\n', codecs.open(utf8_file, "r", "utf-8").read())
+    utf_string = ''.join(list(utf_data))
+    utf_scores = utf_string.split(START_DELIM)[1:] # [1:] ignores first START_DELIM
+    return utf_scores
+        
 def decode_utf_single(utf_to_txt, utf_score):
     "Reads a single UTF encoded file into a Python representation."
     curr_score = []
