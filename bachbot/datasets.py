@@ -27,7 +27,7 @@ def prepare_command(keep_fermatas, subset, mono, parts_to_mask=[]):
     return prepare(keep_fermatas, subset, mono, parts_to_mask=[])
     
     
-def prepare(keep_fermatas, subset, mono, parts_to_mask=[]):
+def prepare(keep_fermatas=True, subset=False, mono=False, parts_to_mask=[]):
     """
     Prepares polyphonic scores using a chord tuple representation.
 

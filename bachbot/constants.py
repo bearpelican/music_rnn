@@ -2,9 +2,10 @@ import os.path
 
 TORCH_RNN_DIR = os.path.expanduser('~/torch-rnn') # NOTE: point this as necessary
 
-BACHBOT_DIR = os.path.abspath(os.path.join(os.path.realpath(__file__), '..'))
-SCRATCH_DIR = BACHBOT_DIR + '/data/scratch'
-OUT_DIR = BACHBOT_DIR + '/data/out'
+BACHBOT_DIR = os.path.abspath(os.path.join(os.path.realpath(__file__), '..', '..'))
+SCRATCH_DIR = BACHBOT_DIR + '/data/bachbot/scratch'
+OUT_DIR = BACHBOT_DIR + '/data/bachbot/out'
+CONCAT_DIR = SCRATCH_DIR + '/concat'
 
 CHORD_BOUNDARY_DELIM = '|||'
 FERMATA_SYM = '(.)'

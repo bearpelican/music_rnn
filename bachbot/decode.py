@@ -27,14 +27,14 @@ def decode():
 def sampled_stream_command(utf_to_txt_json, utf8_file, out_dir, min_length, max_length):
     return sampled_stream(utf_to_txt_json, utf8_file, out_dir, min_length, max_length)
 
-def sampled_stream(utf_to_txt_json, utf8_file, out_dir, min_length, max_length):
+def sampled_stream(utf_to_txt_json, utf8_file, out_dir, min_length=100, max_length=400):
     """
     Decodes all scores in a single sampled UTF stream to text and musicXML.
 
     This method splits on START_DELIM and outputs one text and musicXML encoded file for each score.
     """
     utf_to_txt = json.load(utf_to_txt_json)
-    utf_scores = find_utf_scores(utf_to_txt, utf8_file)
+    utf_scores = parse_utf_file(utf8_file)
 
     i = 0
     for utf_score in utf_scores:
@@ -58,14 +58,27 @@ def single(utf_to_txt_json, utf8_file, out_file):
     Decodes a single UTF8 output file
     """
     utf_to_txt = json.load(utf_to_txt_json)
-    utf_scores = find_utf_scores(utf_to_txt, utf8_file)
+    utf_scores = parse_utf_file(utf8_file)
 
     score = decode_utf_single(utf_to_txt, utf_scores[0])
     print('Writing {0}'.format(out_file.name))
     if score:
         to_musicxml(score).write('musicxml', out_file.name)
+        
+        
+def decode_string(utf_to_txt, utf8_string):
+    """
+    Decodes a single UTF8 output file
+    """
+    utf_scores = utf8_string.split(START_DELIM)[1:] # [1:] ignores first START_DELIM
 
-def find_utf_scores(utf_to_txt, utf8_file):
+    score = decode_utf_single(utf_to_txt, utf_scores[0])
+    if score:
+#        to_musicxml(score).write('musicxml', out_file.name)
+        return score, to_musicxml(score)
+        
+
+def parse_utf_file(utf8_file):
 #    utf_to_txt = json.load(utf_to_txt_json)   
     # (AS) Old python 2 way
 #    utf_data = filter(lambda x: x != u'\n', codecs.open(utf8_file, "r", "utf-8").read())
@@ -99,6 +112,7 @@ def decode_utf_single(utf_to_txt, utf_score):
             print(u'Skipping unknown token: {}'.format(utf_token))
         else:
             curr_chord_notes.append(eval(txt))
+    return curr_score
 
 def to_musicxml(sc_enc):
     "Converts Chord tuples (see chorales.prepare_poly) to musicXML"
